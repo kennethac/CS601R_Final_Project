@@ -1,4 +1,5 @@
 import torchvision
+import torch.nn as nn
 
 from models.FeatureClassifier import FeatureClassifier
 
