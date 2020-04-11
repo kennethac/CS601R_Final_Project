@@ -51,5 +51,5 @@ def get_loader(is_training:bool, batch_size:int):
       mat_anno = "/content/devkit/cars_train_annos.mat"
   else:
       mat_anno = "/content/devkit/cars_test_annos.mat"
-  dataset = CarsDataset(mat_anno, data_dir="/content/cars_ims", transform=transforms)
+  dataset = CarsDataset(mat_anno, data_dir="/content/car_ims", transform=transforms)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
