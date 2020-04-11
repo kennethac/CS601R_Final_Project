@@ -48,7 +48,7 @@ def get_loader(is_training:bool, batch_size:int):
   transforms = _get_simclr_pipeline_transform()
 
   if is_training:
-      mat_anno = "content/devkit/cars_train_annos.mat"
+      mat_anno = "/content/devkit/cars_train_annos.mat"
   else:
       mat_anno = "/content/devkit/cars_test_annos.mat"
   dataset = CarsDataset(mat_anno, data_dir="/content/cars_ims", transform=transforms)
