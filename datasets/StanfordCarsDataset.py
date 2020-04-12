@@ -51,7 +51,7 @@ def get_loader(is_training:bool, batch_size:int):
       mat_anno = "/content/devkit/cars_train_annos.mat"
       data_dir = "/content/cars_train"
   else:
-      mat_anno = "/content/devkit/cars_test_annos.mat"
+      mat_anno = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_test_annos_withlabels.mat"
       data_dir = "/content/cars_test"
   dataset = CarsDataset(mat_anno, data_dir=data_dir, transform=transforms)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
