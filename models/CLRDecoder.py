@@ -2,7 +2,7 @@ import torch.nn as nn
 
 class CLRNonLinearDecoder(nn.Module):
   def __init__(self, num_features=40, single_output=True):
-    super(CLRDecoder, self).__init__()
+    super(CLRNonLinearDecoder, self).__init__()
     self.adapter = nn.Sequential(
         nn.ReLU(),
         nn.Linear(2048, 1000),

@@ -18,7 +18,7 @@ class EncodedStanfordCarsDataset(Dataset):
       y = torch.LongTensor([car_class])
       return encoded, y
 
-def get_loader(is_training:bool, batch_size:int, cross_encodings:bool=False, average_embeddings=True):
+def get_loader(is_training:bool, batch_size:int, cross_encodings:bool=False, average_embeddings=False):
   assert not cross_encodings and average_embeddings, "You can't do both cross encodings and average embeddings"
 
   if cross_encodings:
@@ -36,7 +36,7 @@ def get_loader(is_training:bool, batch_size:int, cross_encodings:bool=False, ave
     else:
       mat_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_test_annos_withlabels.mat"
       enc_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/stanfordCars-scmmodel-valid_encodings.pt"
-      
+
   else:
     if is_training:
       mat_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_train_annos.mat"
