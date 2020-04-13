@@ -40,10 +40,10 @@ def get_loader(is_training:bool, batch_size:int, cross_encodings:bool=False, ave
   elif compCars:
     if is_training:
       mat_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_train_annos.mat"
-      enc_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/stanfordCars-ccmmodel-train_encodings.pt"
+      enc_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/stanfordCars-ccmodel-train_encodings.pt"
     else:
       mat_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_test_annos_withlabels.mat"
-      enc_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/stanfordCars-ccmmodel-valid_encodings.pt"
+      enc_loc = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/stanfordCars-ccmodel-valid_encodings.pt"
 
   else:
     if is_training:
