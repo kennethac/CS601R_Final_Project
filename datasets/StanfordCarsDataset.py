@@ -1,5 +1,6 @@
 import os
 import torch
+import torch.nn as nn
 import torchvision.transforms as transforms
 import torchvision.models
 from torch.utils.data import Dataset
@@ -33,7 +34,7 @@ class CarsDataset(Dataset):
         self.encode = encode
         
         if self.encode:
-            self.resnet = torchvision.models.resnet50(pretrained=True)
+            self.resnet = nn.Sequential(torchvision.models.resnet50(pretrained=True).children()[:-1])
             self.cache = { }
 
     def __len__(self):
