@@ -1,4 +1,5 @@
 import torch.nn as nn
+import models
 
 class CLRNonLinearDecoder(nn.Module):
   def __init__(self, num_features=40, single_output=True):
