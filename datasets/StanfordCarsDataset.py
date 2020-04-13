@@ -52,7 +52,7 @@ class CarsDataset(Dataset):
         y = torch.LongTensor([car_class])
 
         if self.encode:
-            image = self.resnet(image)
+            image = self.resnet(image.unsqueeze(0))
             image = image.detach()
             self.cache[idx] = image, y
 
