@@ -19,7 +19,7 @@ class EncodedStanfordCarsDataset(Dataset):
       return encoded, y
 
 def get_loader(is_training:bool, batch_size:int, cross_encodings:bool=False, average_embeddings=False, compCars=False):
-  assert not cross_encodings and average_embeddings and compCars, "You can't do both cross encodings and average embeddings"
+  assert not (cross_encodings and average_embeddings and compCars), "You can't do both cross encodings and average embeddings"
 
   if cross_encodings:
     if is_training:
