@@ -54,7 +54,6 @@ class CarsDataset(Dataset):
 
         if self.encode:
             image = self.resnet(image.unsqueeze(0)).view((-1, 2048)).squeeze(0)
-            image = image.detach()
             self.cache[idx] = image, y
 
         return image, y
