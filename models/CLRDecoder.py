@@ -1,5 +1,5 @@
 import torch.nn as nn
-import models
+import models.ResNetDecoder
 
 class CLRNonLinearDecoder(nn.Module):
   def __init__(self, num_features=40, single_output=True):
