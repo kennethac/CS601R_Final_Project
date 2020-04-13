@@ -9,7 +9,7 @@ class EncodedCelebADataset(Dataset):
         target_col_idx specifies the column index from the attributes to use as the label
         target specifies a target that spans multiple columns
     '''
-    def __init__(self, data_root, split='train', target_col_idx=None, target=None):
+    def __init__(self, data_root, split='train', target_col_idx=None, target=None, cross=False):
         split_map = {
             "train": 0,
             "valid": 1,
@@ -38,7 +38,10 @@ class EncodedCelebADataset(Dataset):
         self.labels = (self.labels + 1) // 2 # changes it from -1,1 to 0,1
         print(self.labels.shape)
         print(f"Mask shape: {mask.shape}")
-        self.encodings = torch.load(os.path.join(data_root, f'{split}_encodings.pt'))
+        if cross:            
+            self.encodings = torch.load(os.path.join(data_root, f'celeba-scmodel-{split}_encodings.pt'))
+        else:
+            self.encodings = torch.load(os.path.join(data_root, f'{split}_encodings.pt'))
 
     def __len__(self):
         return self.labels.shape[0]
@@ -50,7 +53,7 @@ class EncodedCelebADataset(Dataset):
         import pdb; pdb.set_trace()
         raise
 
-def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba"):
+def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba", cross=False):
   target_cols = list(range(40)) # I'm pretty sure there should be 40 columns..,
-  dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols)
+  dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols, cross=cross)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
