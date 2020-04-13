@@ -1,6 +1,7 @@
 import os
 import torch
 import torchvision.transforms as transforms
+import torchvision.models
 from torch.utils.data import Dataset
 import scipy.io
 from PIL import Image
@@ -21,7 +22,7 @@ def _get_simclr_pipeline_transform():
     return data_transforms
 
 class CarsDataset(Dataset):
-    def __init__(self, mat_anno, data_dir, transform=None):
+    def __init__(self, mat_anno, data_dir, transform=None, encode=False):
         self.full_data_set = scipy.io.loadmat(mat_anno)
         self.car_annotations = self.full_data_set['annotations']
         self.car_annotations = self.car_annotations[0]
@@ -29,10 +30,19 @@ class CarsDataset(Dataset):
         self.data_dir = data_dir
         self.transform = transform
 
+        self.encode = encode
+        
+        if self.encode:
+            self.resnet = torchvision.models.resnet50(pretrained=True)
+            self.cache = { }
+
     def __len__(self):
         return len(self.car_annotations)
 
     def __getitem__(self, idx):
+        if self.encode and idx in self.cache:
+            return self.cache[idx]
+
         img_name = os.path.join(self.data_dir, self.car_annotations[idx][-1][0])
         image = Image.open(img_name)
         car_class = self.car_annotations[idx][-2][0][0] -1
@@ -40,9 +50,15 @@ class CarsDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         y = torch.LongTensor([car_class])
+
+        if self.encode:
+            image = self.resnet(image)
+            image = image.detach()
+            self.cache[idx] = image, y
+
         return image, y
 
-def get_loader(is_training:bool, batch_size:int):
+def get_loader(is_training:bool, batch_size:int, encode=False):
   from torch.utils.data import Dataset, DataLoader
 
   transforms = _get_simclr_pipeline_transform()
@@ -53,5 +69,6 @@ def get_loader(is_training:bool, batch_size:int):
   else:
       mat_anno = "/content/gdrive/My Drive/SimCLR/data/stanfordCars/cars_test_annos_withlabels.mat"
       data_dir = "/content/cars_test"
-  dataset = CarsDataset(mat_anno, data_dir=data_dir, transform=transforms)
+
+  dataset = CarsDataset(mat_anno, data_dir=data_dir, transform=transforms, encode=encode)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
