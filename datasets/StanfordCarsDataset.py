@@ -34,7 +34,7 @@ class CarsDataset(Dataset):
         self.encode = encode
         
         if self.encode:
-            self.resnet = nn.Sequential(*list(torchvision.models.resnet50().children())[:-1])
+            self.resnet = nn.Sequential(*list(torchvision.models.resnet50(pretrained=True).children())[:-1])
             self.cache = { }
 
     def __len__(self):
