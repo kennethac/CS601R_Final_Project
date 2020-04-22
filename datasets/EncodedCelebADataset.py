@@ -25,7 +25,7 @@ class SubEncodedCelebADataset(Dataset):
         attr_names = list(attr.columns)
 
         remove_me = attr_names.index(selected_attribute)
-        attr = torch.Tensor(attr.values)
+        attr = torch.Tensor(attr.values).int()
         mask = torch.zeros_like(attr[0])
         mask[remove_me] = 1
 
