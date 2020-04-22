@@ -11,7 +11,7 @@ import datasets
 class SubEncodedCelebADataset(Dataset):
     def __init__(self, data_root, encodings_loc:str, is_train:bool, selected_attribute:str, exclude:bool=True, transform=None):
         super(Dataset, self).__init__()
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         splits = pd.read_csv(os.path.join(data_root, "list_eval_partition.txt"), delim_whitespace=True, header=None, index_col=0)
         attr = pd.read_csv(os.path.join(data_root, "list_attr_celeba.txt"), delim_whitespace=True, header=1)
         mask = splits[1] == 0 if is_train else 1
@@ -25,7 +25,7 @@ class SubEncodedCelebADataset(Dataset):
         attr_names = list(attr.columns)
 
         remove_me = attr_names.index(selected_attribute)
-        attr = torch.Tensor(attr.values).int()
+        attr = self.labels
         mask = torch.zeros_like(attr[0])
         mask[remove_me] = 1
 
