@@ -34,6 +34,7 @@ class SubEncodedCelebADataset(Dataset):
         else:
             self.selected_indices =  torch.any((attr & mask).type(torch.uint8), dim=1).nonzero()
         
+        print(f"Length: {len(self.selected_indices)}")
         self.encodings = torch.load(encodings_loc)
     
     def __len__(self):
