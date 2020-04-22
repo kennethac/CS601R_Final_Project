@@ -11,20 +11,27 @@ import datasets
 class SubEncodedCelebADataset(Dataset):
     def __init__(self, data_root, encodings_loc:str, is_train:bool, selected_attribute:str, exclude:bool=True, transform=None):
         super(Dataset, self).__init__()
+        
+        splits = pd.read_csv(os.path.join(data_root, "list_eval_partition.txt"), delim_whitespace=True, header=None, index_col=0)
+        attr = pd.read_csv(os.path.join(data_root, "list_attr_celeba.txt"), delim_whitespace=True, header=1)
+        mask = splits[1] == 0 if is_train else 1
 
-        dataset = torchvision.datasets.celeba.CelebA(data_root, download=True, transform=transform, split="train" if is_train else "test")
+        self.labels = torch.as_tensor(attr[mask].values)
+        self.labels = (self.labels + 1) // 2 # changes it from -1,1 to 0,1
 
+        print(self.labels.shape)
+        print(f"Mask shape: {mask.shape}")
 
-        remove_me = dataset.attr_names.index(selected_attribute)
-        mask = torch.zeros_like(dataset.attr[0])
+        attr_names = list(attr.columns)
+
+        remove_me = attr_names.index(selected_attribute)
+        mask = torch.zeros_like(attr[0])
         mask[remove_me] = 1
 
         if exclude:
-            self.selected_indices = (torch.any((dataset.attr & mask).type(torch.uint8), dim=1) == 0).nonzero()
+            self.selected_indices = (torch.any((attr & mask).type(torch.uint8), dim=1) == 0).nonzero()
         else:
-            self.selected_indices =  torch.any((dataset.attr & mask).type(torch.uint8), dim=1).nonzero()
-
-        self.dataset = dataset
+            self.selected_indices =  torch.any((attr & mask).type(torch.uint8), dim=1).nonzero()
         
         self.encodings = torch.load(encodings_loc)
     
@@ -33,7 +40,7 @@ class SubEncodedCelebADataset(Dataset):
 
     def __getitem__(self, idx):
         translated_index = self.selected_indices[idx]
-        img, lab = self.dataset[translated_index]
+        lab = self.labels[translated_index]
         return self.encodings[translated_index], lab
 
 class EncodedCelebADataset(Dataset):
