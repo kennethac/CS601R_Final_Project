@@ -2,6 +2,35 @@ import os
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as transforms
+
+class SubEncodedCelebADataset(Dataset):
+    def __init__(self, data_root, encodings_loc:str, is_train:bool, selected_attribute:str, exclude:bool=True, transform=None):
+        super(Dataset, self).__init__()
+
+        dataset = datasets.CelebA(data_root, split='train' if is_train else 'valid', download=True,
+                                    transform=transform)
+
+        remove_me = dataset.attr_names.index(selected_attribute)
+        mask = torch.zeros_like(dataset.attr[0])
+        mask[remove_me] = 1
+
+        if exclude:
+            self.selected_indices = (torch.any((dataset.attr & mask).type(torch.uint8), dim=1) == 0).nonzero()
+        else:
+            self.selected_indices =  torch.any((dataset.attr & mask).type(torch.uint8), dim=1).nonzero()
+
+        self.dataset = dataset
+        
+        self.encodings = torch.load(encodings_loc)
+    
+    def __len__(self):
+        return len(self.selected_indices)
+
+    def __getitem__(self, idx):
+        translated_index = self.selected_indices[idx]
+        img, lab = self.dataset[translated_index]
+        return self.encodings[translated_index], lab
 
 class EncodedCelebADataset(Dataset):
     '''
@@ -56,4 +85,9 @@ class EncodedCelebADataset(Dataset):
 def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba", cross=False):
   target_cols = list(range(40)) # I'm pretty sure there should be 40 columns..,
   dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols, cross=cross)
+  return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
+
+def get_sub_loader(is_training:bool, batch_size:int, encodings_loc:str, selected_attribute:str, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba"):
+  target_cols = list(range(40)) # I'm pretty sure there should be 40 columns..,
+  dataset =  SubEncodedCelebADataset(root_dir, encodings_loc, is_train=is_training, selected_attribute=selected_attribute, exclude=True, transform=transforms.ToTensor())
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
