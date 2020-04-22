@@ -3,6 +3,7 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
+import datasets
 
 class SubEncodedCelebADataset(Dataset):
     def __init__(self, data_root, encodings_loc:str, is_train:bool, selected_attribute:str, exclude:bool=True, transform=None):
