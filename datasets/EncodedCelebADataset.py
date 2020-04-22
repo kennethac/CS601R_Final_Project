@@ -98,7 +98,7 @@ def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Dr
   dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols, cross=cross)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
 
-def get_sub_loader(is_training:bool, batch_size:int, encodings_loc:str, selected_attribute:str, root_dir="/content"):
+def get_sub_loader(is_training:bool, batch_size:int, encodings_loc:str, selected_attribute:str, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba"):
   target_cols = list(range(40)) # I'm pretty sure there should be 40 columns..,
   dataset =  SubEncodedCelebADataset(root_dir, encodings_loc, is_train=is_training, selected_attribute=selected_attribute, exclude=True, transform=transforms.ToTensor())
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
