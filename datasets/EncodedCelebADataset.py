@@ -54,7 +54,7 @@ class EncodedCelebADataset(Dataset):
         target_col_idx specifies the column index from the attributes to use as the label
         target specifies a target that spans multiple columns
     '''
-    def __init__(self, data_root, split='train', target_col_idx=None, target=None, cross=False):
+    def __init__(self, data_root, split='train', target_col_idx=None, target=None, cross=False, samples_each=None):
         split_map = {
             "train": 0,
             "valid": 1,
@@ -88,6 +88,16 @@ class EncodedCelebADataset(Dataset):
         else:
             self.encodings = torch.load(os.path.join(data_root, f'{split}_encodings.pt'))
 
+        if samples_each is not None:
+            a = self.labels
+            num_to_keep = samples_each
+            filtered_indices = [ a[a[i] == 1][:num_to_keep]["index"].tolist() for i in range(0, a.size(1))  ]
+            filtered_indices = [ j for i in filtered_indices for j in i ]
+
+            self.labels = self.labels[filtered_indices]
+            self.encodings = self.encodings[filtered_indices]
+
+
     def __len__(self):
         return self.labels.shape[0]
 
@@ -98,9 +108,9 @@ class EncodedCelebADataset(Dataset):
         import pdb; pdb.set_trace()
         raise
 
-def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba", cross=False):
+def get_loader(is_training:bool, batch_size:int, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba", cross=False, samples_each=None):
   target_cols = list(range(40)) # I'm pretty sure there should be 40 columns..,
-  dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols, cross=cross)
+  dataset =  EncodedCelebADataset(root_dir, split="train" if is_training else "valid", target_col_idx=target_cols, cross=cross, samples_each=samples_each)
   return DataLoader(dataset, batch_size=batch_size, shuffle=is_training)
 
 def get_sub_loader(is_training:bool, batch_size:int, encodings_loc:str, selected_attribute:str, root_dir="/content/gdrive/My Drive/SimCLR/data/celeba"):
