@@ -15,7 +15,7 @@ class SubEncodedCelebADataset(Dataset):
         splits = pd.read_csv(os.path.join(data_root, "list_eval_partition.txt"), delim_whitespace=True, header=None, index_col=0)
         attr = pd.read_csv(os.path.join(data_root, "list_attr_celeba.txt"), delim_whitespace=True, header=1)
         split_id = 0 if is_train else 1
-        print(f"Split is {split_id"})
+        print(f"Split is {split_id}")
         mask = splits[1] == split_id
 
         self.labels = torch.as_tensor(attr[mask].values)
