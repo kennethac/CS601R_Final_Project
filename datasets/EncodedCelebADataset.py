@@ -89,7 +89,8 @@ class EncodedCelebADataset(Dataset):
             self.encodings = torch.load(os.path.join(data_root, f'{split}_encodings.pt'))
 
         if samples_each is not None:
-            a = self.labels
+            import pdb; pdb.set_trace()
+            a = pd.DataFrame(self.labels).reset_index()
             num_to_keep = samples_each
             filtered_indices = [ a[a[i] == 1][:num_to_keep]["index"].tolist() for i in range(0, a.size(1))  ]
             filtered_indices = [ j for i in filtered_indices for j in i ]
