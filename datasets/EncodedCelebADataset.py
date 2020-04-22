@@ -3,14 +3,17 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
+import torchvision.datasets
+
 import datasets
+
 
 class SubEncodedCelebADataset(Dataset):
     def __init__(self, data_root, encodings_loc:str, is_train:bool, selected_attribute:str, exclude:bool=True, transform=None):
         super(Dataset, self).__init__()
 
-        dataset = datasets.CelebA(data_root, split='train' if is_train else 'valid', download=True,
-                                    transform=transform)
+        dataset = torchvision.datasets.celeba.CelebA(data_root, download=True, transform=transform, split="train" if is_train else "test")
+
 
         remove_me = dataset.attr_names.index(selected_attribute)
         mask = torch.zeros_like(dataset.attr[0])
